@@ -57,3 +57,10 @@ def prepare_model(config, device, model):
 
     model.apply(weights_init)
     return model
+
+def get_criterion(config):
+    if config.criterion == 'BCELoss':
+        criterion = nn.BCELoss()
+    else:
+        raise NotImplementedError(f"Criterion [{config.criterion}] not implemented")
+    return criterion

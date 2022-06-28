@@ -1,5 +1,5 @@
 from omegaconf import OmegaConf
-from utils import get_dataloader, get_device, prepare_model
+from utils import get_dataloader, get_device, prepare_model, get_criterion
 
 from models import Generator, Discriminator
 
@@ -17,3 +17,5 @@ generator = prepare_model(config, device, generator)
 
 discriminator = Discriminator(config)
 discriminator = prepare_model(config, device, discriminator)
+
+criterion = get_criterion(config)

@@ -9,4 +9,4 @@ generator:
   ngf: 64
 discriminator:
   ndf: 64
-
+criterion: BCELoss
