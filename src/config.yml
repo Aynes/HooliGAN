@@ -7,3 +7,6 @@ ngpu: 1
 generator:
   nz: 100
   ngf: 64
+discriminator:
+  ndf: 64
+

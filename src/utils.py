@@ -4,9 +4,6 @@ from torch.utils.data import DataLoader
 import torch
 from torch import nn
 
-from models import Generator
-
-
 
 def get_dataloader(config):
     image_size = config.image_size
@@ -51,12 +48,12 @@ def weights_init(model):
         nn.init.constant_(model.bias.data, 0)
 
 
-def get_generator(config, device):
+def prepare_model(config, device, model):
     ngpu = config.ngpu
-    generator = Generator(config).to(device)
+    model = model.to(device)
 
     if (device.type == 'cuda') and (ngpu > 1):
-        generator = nn.DataParallel(generator, list(range(ngpu)))
+        generator = nn.DataParallel(model, list(range(ngpu)))
 
-    generator.apply(weights_init)
-    return generator
+    model.apply(weights_init)
+    return model
