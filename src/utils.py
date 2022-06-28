@@ -2,6 +2,11 @@ from torchvision.datasets import ImageFolder
 from torchvision import transforms 
 from torch.utils.data import DataLoader
 import torch
+from torch import nn
+
+from models import Generator
+
+
 
 def get_dataloader(config):
     image_size = config.image_size
@@ -35,3 +40,23 @@ def get_dataloader(config):
 def get_device(config):
     device = torch.device("cuda:0" if (torch.cuda.is_available() and config.ngpu > 0) else "cpu")
     return device
+
+
+def weights_init(model):
+    classname = model.__class__.__name__
+    if classname.find('Conv') != -1:
+        nn.init.normal_(model.weight.data, 0.0, 0.02)
+    elif classname.find('BatchNorm') != -1:
+        nn.init.normal_(model.weight.data, 1.0, 0.02)
+        nn.init.constant_(model.bias.data, 0)
+
+
+def get_generator(config, device):
+    ngpu = config.ngpu
+    generator = Generator(config).to(device)
+
+    if (device.type == 'cuda') and (ngpu > 1):
+        generator = nn.DataParallel(generator, list(range(ngpu)))
+
+    generator.apply(weights_init)
+    return generator

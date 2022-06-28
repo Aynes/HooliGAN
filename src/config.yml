@@ -1,5 +1,9 @@
 dataroot: '../data'
 image_size: 64
+nc: 3
 batch_size: 128
 workers: 2
 ngpu: 1
+generator:
+  nz: 100
+  ngf: 64
