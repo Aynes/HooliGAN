@@ -4,6 +4,7 @@ from torch.utils.data import DataLoader
 import torch
 from torch import nn, optim
 
+from torch.nn.parallel import DataParallel
 from models import Generator, Discriminator
 
 
@@ -78,7 +79,7 @@ def get_model(config, device, model_name):
     model = init_weights(config, model_name, model)
 
     if (device.type == 'cuda') and (ngpu > 1):
-        model = nn.DataParallel(model, list(range(ngpu)))
+        model = DataParallel(model, list(range(ngpu)))
 
     return model
 
