@@ -1,0 +1,28 @@
+dataroot: '../data'
+image_size: 64
+nc: 3
+batch_size: 128
+workers: 2
+ngpu: 1
+num_epochs: 2
+
+generator:
+  weigths: 'models/weights/generator.pt' # path or none
+  nz: 100
+  ngf: 64
+  optimizer:
+    name: Adam
+    Adam:
+      lr: 0.0002
+      beta1: 0.5
+
+discriminator:
+  weigths: 'models/weights/discriminator.pt' # path or none
+  ndf: 64
+  optimizer:
+    name: Adam
+    Adam:
+      lr: 0.0002
+      beta1: 0.5
+
+criterion: BCELoss
