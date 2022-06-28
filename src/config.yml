@@ -7,6 +7,7 @@ ngpu: 1
 num_epochs: 2
 
 generator:
+  weigths: 'models/weights/generator.pt' # path or none
   nz: 100
   ngf: 64
   optimizer:
@@ -16,6 +17,7 @@ generator:
       beta1: 0.5
 
 discriminator:
+  weigths: 'models/weights/discriminator.pt' # path or none
   ndf: 64
   optimizer:
     name: Adam

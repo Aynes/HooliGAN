@@ -4,6 +4,7 @@ from torch.utils.data import DataLoader
 import torch
 from torch import nn, optim
 
+from models import Generator, Discriminator
 
 
 def get_dataloader(config):
@@ -40,7 +41,7 @@ def get_device(config):
     return device
 
 
-def weights_init(model):
+def init_default_weights(model):
     classname = model.__class__.__name__
     if classname.find('Conv') != -1:
         nn.init.normal_(model.weight.data, 0.0, 0.02)
@@ -49,14 +50,36 @@ def weights_init(model):
         nn.init.constant_(model.bias.data, 0)
 
 
-def prepare_model(config, device, model):
-    ngpu = config.ngpu
+def init_weights(config, model_name, model):
+    if config[model_name].weigths is not None:
+        path = config[model_name].weigths
+        model.load_state_dict(torch.load(path))
+    else:
+        model.apply(init_default_weights)
+    return model
+
+
+def init_model(config, device, model_name):
+    if model_name == 'generator':
+        model = Generator(config)
+    elif model_name == 'discriminator':
+        model = Discriminator(config)
+    else:
+        raise NotImplementedError(f"model [{model_name}] not implemented")
+    
     model = model.to(device)
 
-    if (device.type == 'cuda') and (ngpu > 1):
-        generator = nn.DataParallel(model, list(range(ngpu)))
+    return model
 
-    model.apply(weights_init)
+
+def get_model(config, device, model_name):
+    ngpu = config.ngpu
+    model = init_model(config, device, model_name)
+    model = init_weights(config, model_name, model)
+
+    if (device.type == 'cuda') and (ngpu > 1):
+        model = nn.DataParallel(model, list(range(ngpu)))
+
     return model
 
 
