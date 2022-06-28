@@ -4,6 +4,7 @@ nc: 3
 batch_size: 128
 workers: 2
 ngpu: 1
+num_epochs: 2
 
 generator:
   nz: 100
