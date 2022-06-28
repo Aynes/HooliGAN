@@ -1,0 +1,4 @@
+dataroot: '../data'
+image_size: 64
+batch_size: 128
+workers: 2
