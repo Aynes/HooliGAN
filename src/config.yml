@@ -4,9 +4,22 @@ nc: 3
 batch_size: 128
 workers: 2
 ngpu: 1
+
 generator:
   nz: 100
   ngf: 64
+  optimizer:
+    name: Adam
+    Adam:
+      lr: 0.0002
+      beta1: 0.5
+
 discriminator:
   ndf: 64
+  optimizer:
+    name: Adam
+    Adam:
+      lr: 0.0002
+      beta1: 0.5
+
 criterion: BCELoss

@@ -2,7 +2,8 @@ from torchvision.datasets import ImageFolder
 from torchvision import transforms 
 from torch.utils.data import DataLoader
 import torch
-from torch import nn
+from torch import nn, optim
+
 
 
 def get_dataloader(config):
@@ -58,9 +59,20 @@ def prepare_model(config, device, model):
     model.apply(weights_init)
     return model
 
+
 def get_criterion(config):
     if config.criterion == 'BCELoss':
         criterion = nn.BCELoss()
     else:
         raise NotImplementedError(f"Criterion [{config.criterion}] not implemented")
     return criterion
+
+
+def get_optimizer(optimizer_config, model):
+    if optimizer_config.name == 'Adam':
+        lr = optimizer_config[optimizer_config.name].lr
+        beta1 = optimizer_config[optimizer_config.name].beta1
+        optimizer = optim.Adam(model.parameters(), lr=lr, betas=(beta1, 0.999))
+    else:
+        raise NotImplementedError(f"Optimizer[{optimizer_config.name}] not implemented")
+    return optimizer
