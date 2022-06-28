@@ -1,7 +1,7 @@
 from torchvision.datasets import ImageFolder
 from torchvision import transforms 
 from torch.utils.data import DataLoader
-
+import torch
 
 def get_dataloader(config):
     image_size = config.image_size
@@ -30,3 +30,8 @@ def get_dataloader(config):
         num_workers=workers,
     )
     return dataloader
+
+
+def get_device(config):
+    device = torch.device("cuda:0" if (torch.cuda.is_available() and config.ngpu > 0) else "cpu")
+    return device
