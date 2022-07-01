@@ -3,16 +3,19 @@ from utils import get_dataloader, get_device, get_model, get_criterion, get_opti
 import torchvision.utils as vutils
 
 import torch
+import wandb
 
 
 
-PATH_CONFIG = 'config.yml'
+PATH_CONFIG = '/usr/src/app/src/config.yml'
 
 
 config = OmegaConf.load(PATH_CONFIG)
+run = wandb.init(project=config.project)
+
 device = get_device(config)
 
-dataloader = get_dataloader(config)
+dataloader = get_dataloader(config, run)
 
 generator = get_model(config, device, 'generator')
 discriminator = get_model(config, device, 'discriminator')
@@ -21,9 +24,6 @@ criterion = get_criterion(config)
 
 optimizer_discriminator = get_optimizer(config.discriminator.optimizer, discriminator)
 optimizer_generator = get_optimizer(config.generator.optimizer, generator)
-
-
-
 
 # Training Loop
 
@@ -94,5 +94,5 @@ for epoch in range(config.num_epochs):
 
         iters += 1
 
-torch.save(discriminator.state_dict(), 'models/weights/discriminator.pt')
-torch.save(generator.state_dict(), 'models/weights/generator.pt')
+torch.save(discriminator.state_dict(), config.generator.weigths)
+torch.save(generator.state_dict(), config.discriminator.weigths)

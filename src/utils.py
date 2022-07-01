@@ -6,9 +6,16 @@ from torch import nn, optim
 
 from torch.nn.parallel import DataParallel
 from models import Generator, Discriminator
+import wandb
 
 
-def get_dataloader(config):
+def wandb_save_dataset(run, path):
+    dataset = wandb.Artifact("dataset", type="dataset")
+    dataset.add_dir(path)
+    run.log_artifact(dataset)
+
+
+def get_dataloader(config, run):
     image_size = config.image_size
     dataroot = config.dataroot
     batch_size = config.batch_size
@@ -22,6 +29,8 @@ def get_dataloader(config):
             transforms.Normalize((0.5, 0.5, 0.5), (0.5, 0.5, 0.5)),
         ]
     )
+
+    wandb_save_dataset(run, path=dataroot)
 
     dataset = ImageFolder(
         root=dataroot,
