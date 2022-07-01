@@ -14,4 +14,4 @@ generator.eval()
 
 noise = torch.randn(3, config.generator.nz, 1, 1, device=device)
 fake = generator(noise)
-save_image(fake, f'../gen_images/img_{time()git }.png')
+save_image(fake, f'../data/gen_images/img_{time()}.png')
