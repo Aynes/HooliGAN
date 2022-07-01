@@ -1,5 +1,5 @@
 from omegaconf import OmegaConf
-from utils import get_dataloader, get_device, get_model, get_criterion, get_optimizer
+from utils import get_dataloader, get_device, get_model, get_criterion, get_optimizer, wandb_log_model
 import torchvision.utils as vutils
 
 import torch
@@ -21,6 +21,9 @@ generator = get_model(config, device, 'generator')
 discriminator = get_model(config, device, 'discriminator')
 
 criterion = get_criterion(config)
+
+wandb.watch(generator, criterion=criterion, log="all", log_graph=True, log_freq=config.log_freq, idx=1)
+wandb.watch(discriminator, criterion=criterion, log='all', log_graph=True, log_freq=config.log_freq, idx=2)
 
 optimizer_discriminator = get_optimizer(config.discriminator.optimizer, discriminator)
 optimizer_generator = get_optimizer(config.generator.optimizer, generator)
@@ -55,6 +58,10 @@ for epoch in range(config.num_epochs):
         noise = torch.randn(b_size, config.generator.nz, 1, 1, device=device)
         fake = generator(noise)
 
+        if iters % config.log_freq == 0:
+            images = wandb.Image(fake, caption="Fake image from generator")
+            wandb.log({"examples": images})
+        
         label.fill_(fake_label)
 
         output = discriminator(fake.detach()).view(-1)
@@ -76,6 +83,16 @@ for epoch in range(config.num_epochs):
         D_G_z2 = output.mean().item()
         optimizer_generator.step()
 
+        wandb.log(
+            {
+                'Loss_D': errD.item(),
+                'Loss_G': errG.item(),
+                'D(x)': D_x,
+                'D(G(z1))': D_G_z1,
+                'D(G(z2))': D_G_z2,
+            }
+        )
+
         # Output training stats
         if i % 50 == 0:
             print('[%d/%d][%d/%d]\tLoss_D: %.4f\tLoss_G: %.4f\tD(x): %.4f\tD(G(z)): %.4f / %.4f'
@@ -94,5 +111,10 @@ for epoch in range(config.num_epochs):
 
         iters += 1
 
-torch.save(discriminator.state_dict(), config.generator.weigths)
-torch.save(generator.state_dict(), config.discriminator.weigths)
+torch.save(discriminator.state_dict(), config.discriminator.weigths)
+wandb_log_model(run, config, name='discriminator', path=config.discriminator.weigths)
+
+torch.save(generator.state_dict(), config.generator.weigths)
+wandb_log_model(run, config, name='generator', path=config.generator.weigths)
+
+

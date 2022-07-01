@@ -1,4 +1,5 @@
 project: "hooligan"
+log_freq: 5
 
 dataroot: '/usr/src/app/data'
 image_size: 64
@@ -9,7 +10,7 @@ ngpu: 1
 num_epochs: 2
 
 generator:
-  weigths: '/usr/src/app/src/models/weights/generator.pt' # path or none
+  weigths: '/usr/src/app/src/models/weights/generator.pt' # path or null
   nz: 100
   ngf: 64
   optimizer:
@@ -19,7 +20,7 @@ generator:
       beta1: 0.5
 
 discriminator:
-  weigths: '/usr/src/app/src/models/weights/discriminator.pt' # path or none
+  weigths: '/usr/src/app/src/models/weights/discriminator.pt' # path or null
   ndf: 64
   optimizer:
     name: Adam

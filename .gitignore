@@ -3,3 +3,5 @@ __pycache__
 *.pt
 .DS_Store
 wandb
+gen_images
+.vscode

@@ -15,6 +15,11 @@ def wandb_save_dataset(run, path):
     run.log_artifact(dataset)
 
 
+def wandb_log_model(run, config, name, path):
+    model = wandb.Artifact(name, type="model")
+    model.add_file(path)
+    run.log_artifact(model)
+
 def get_dataloader(config, run):
     image_size = config.image_size
     dataroot = config.dataroot
