@@ -5,3 +5,4 @@ __pycache__
 wandb
 gen_images
 .vscode
+*.png
